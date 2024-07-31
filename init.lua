@@ -84,6 +84,12 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+-- lazygit init
+vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
+vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
+vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' } -- customize lazygit popup window border characters
+vim.g.lazygit_floating_window_use_plenary = 1 -- use plenary.nvim to manage floating window if available
+
 -- Vim background
 vim.o.background = 'dark'
 
@@ -238,7 +244,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -248,6 +254,9 @@ require('lazy').setup({
   --
   --  This is equivalent to:
   --    require('Comment').setup({})
+
+  -- plenary
+  { 'nvim-lua/plenary.nvim' },
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
@@ -1003,7 +1012,7 @@ require('lazy').setup({
     config = function()
       local rosepine = require 'rose-pine'
       rosepine.setup {
-        variant = 'dawn', -- auto, main, moon, or dawn
+        variant = 'moon', -- auto, main, moon, or dawn
         dark_variant = 'main', -- main, moon, or dawn
         dim_inactive_windows = false,
         extend_background_behind_borders = true,
@@ -1070,8 +1079,8 @@ require('lazy').setup({
       }
       --vim.cmd 'colorscheme rose-pine',
       -- vim.cmd("colorscheme rose-pine-main")
-      -- vim.cmd 'colorscheme rose-pine-moon'
-      vim.cmd 'colorscheme rose-pine-dawn'
+      vim.cmd 'colorscheme rose-pine-moon'
+      -- vim.cmd 'colorscheme rose-pine-dawn'
     end,
   },
 
@@ -1159,10 +1168,10 @@ require('lazy').setup({
     config = function()
       require('treesitter-context').setup {
         enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-        max_lines = 1, -- How many lines the window should span. Values <= 0 mean no limit.
+        max_lines = 2, -- How many lines the window should span. Values <= 0 mean no limit.
         min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
         line_numbers = true,
-        multiline_threshold = 1, -- Maximum number of lines to show for a single context
+        multiline_threshold = 2, -- Maximum number of lines to show for a single context
         trim_scope = 'inner', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
         mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
         -- Separator between context and content. Should be a single character string, like '-'.
@@ -1363,6 +1372,27 @@ require('lazy').setup({
         enable_tailwind = true,
       }
     end,
+  },
+
+  -- Lazygit intergration
+  {
+    'kdheepak/lazygit.nvim',
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
