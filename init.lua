@@ -1405,17 +1405,19 @@ require('lazy').setup({
     lazy = true,
     'sontungexpt/smart-resizing',
     init = function()
-      vim.keymap.set('n', '<A-h>', function()
-        require('smart-resizing').adjust_current_win_width(1, 1)
+      local set = vim.keymap.set
+      local resize = require 'smart-resizing'
+      set('n', '<A-h>', function()
+        resize.adjust_current_win_width(1, 1)
       end)
-      vim.keymap.set('n', '<A-l>', function()
-        require('smart-resizing').adjust_current_win_width(1, 2)
+      set('n', '<A-l>', function()
+        resize.adjust_current_win_width(1, 2)
       end)
-      vim.keymap.set('n', '<A-j>', function()
-        require('smart-resizing').adjust_current_win_height(1, 1)
+      set('n', '<A-j>', function()
+        resize.adjust_current_win_height(1, 1)
       end)
-      vim.keymap.set('n', '<A-k>', function()
-        require('smart-resizing').adjust_current_win_height(1, 2)
+      set('n', '<A-k>', function()
+        resize.adjust_current_win_height(1, 2)
       end)
     end,
   },
