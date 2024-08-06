@@ -1122,6 +1122,7 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      -- require('mini.statusline').setup()
     end,
   },
 
@@ -1183,6 +1184,9 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'TreesitterContextBottom', { default = false, underline = false })
       vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, link = 'Conceal' })
       vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, link = 'NormalNC' })
+      vim.keymap.set('n', '[c', function()
+        require('treesitter-context').go_to_context(vim.v.count1)
+      end, { silent = true, desc = 'Jump to context' })
     end,
   },
 
@@ -1393,6 +1397,27 @@ require('lazy').setup({
     keys = {
       { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
     },
+  },
+
+  -- Split resizing
+  -- A bit redundant but okay
+  {
+    lazy = true,
+    'sontungexpt/smart-resizing',
+    init = function()
+      vim.keymap.set('n', '<A-h>', function()
+        require('smart-resizing').adjust_current_win_width(1, 1)
+      end)
+      vim.keymap.set('n', '<A-l>', function()
+        require('smart-resizing').adjust_current_win_width(1, 2)
+      end)
+      vim.keymap.set('n', '<A-j>', function()
+        require('smart-resizing').adjust_current_win_height(1, 1)
+      end)
+      vim.keymap.set('n', '<A-k>', function()
+        require('smart-resizing').adjust_current_win_height(1, 2)
+      end)
+    end,
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
