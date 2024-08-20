@@ -172,6 +172,9 @@ vim.opt.scrolloff = 10
 -- Make your cursor fat in all modes
 vim.opt.guicursor = 'n-v-i-c:block-Cursor'
 
+-- term color
+vim.opt.termguicolors = true
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -607,6 +610,11 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
+        --java
+        jdtls = {
+          handlers = handlers,
+        },
+
         --python server
         pyright = {
           handlers = handlers,
@@ -876,211 +884,68 @@ require('lazy').setup({
     end,
   },
 
-  -- { -- You can easily change to a different colorscheme.
+  -- You can easily change to a different colorscheme.
   --   -- Change the name of the colorscheme plugin below, and then
   --   -- change the command in the config to whatever the name of that colorscheme is.
   --   --
   --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --   'ellisonleao/gruvbox.nvim',
-  --   priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   init = function()
-  --     require('gruvbox').setup {
-  --       terminal_colors = true, -- add neovim terminal colors
-  --       undercurl = true,
-  --       underline = true,
-  --       bold = true,
-  --       italic = {
-  --         strings = true,
-  --         emphasis = true,
-  --         comments = true,
-  --         operators = false,
-  --         folds = true,
-  --       },
-  --       strikethrough = true,
-  --       invert_selection = false,
-  --       invert_signs = false,
-  --       invert_tabline = false,
-  --       invert_intend_guides = false,
-  --       inverse = true, -- invert background for search, diffs, statuslines and errors
-  --       contrast = '', -- can be "hard", "soft" or empty string
-  --       palette_overrides = {},
-  --       overrides = {},
-  --       dim_inactive = false,
-  --       transparent_mode = false,
-  --     }
-  --     -- Load the colorscheme here.
-  --     -- Like many other themes, this one has different styles, and you could load
-  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  --     vim.cmd.colorscheme 'gruvbox'
-  --
-  --     -- You can configure highlights by doing something like:
-  --     vim.cmd.hi 'Comment gui=none'
-  --   end,
-  -- },
-
-  -- {
-  --   'catppuccin/nvim',
-  --   name = 'catppuccin',
-  --   priority = 1000,
-  --   config = function()
-  --     require('catppuccin').setup {
-  --       flavour = 'macchiato', -- latte, frappe, macchiato, mocha
-  --       background = { -- :h background
-  --         light = 'latte',
-  --         dark = 'macchiato',
-  --       },
-  --       transparent_background = true, -- disables setting the background color.
-  --       show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
-  --       term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
-  --       dim_inactive = {
-  --         enabled = false, -- dims the background color of inactive window
-  --         shade = 'dark',
-  --         percentage = 0.15, -- percentage of the shade to apply to the inactive window
-  --       },
-  --       no_italic = false, -- Force no italic
-  --       no_bold = false, -- Force no bold
-  --       no_underline = false, -- Force no underline
-  --       styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-  --         comments = { 'italic' }, -- Change the style of comments
-  --         conditionals = {},
-  --         loops = {},
-  --         functions = {},
-  --         keywords = {},
-  --         strings = {},
-  --         variables = {},
-  --         numbers = {},
-  --         booleans = {},
-  --         properties = {},
-  --         types = {},
-  --         operators = {},
-  --         -- miscs = {}, -- Uncomment to turn off hard-coded styles
-  --       },
-  --       color_overrides = {},
-  --       custom_highlights = {},
-  --       default_integrations = true,
-  --       integrations = {
-  --         fidget = true,
-  --         cmp = true,
-  --         gitsigns = true,
-  --         nvimtree = true,
-  --         treesitter = true,
-  --         notify = true,
-  --         mini = {
-  --           enabled = true,
-  --           indentscope_color = '',
-  --         },
-  --         -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
-  --         barbar = true,
-  --         telescope = {
-  --           enabled = true,
-  --         },
-  --         indent_blankline = {
-  --           enabled = true,
-  --           scope_color = 'text', -- catppuccin color (eg. `lavender`) Default: text
-  --           colored_indent_levels = false,
-  --         },
-  --         native_lsp = {
-  --           enabled = true,
-  --           virtual_text = {
-  --             errors = { 'italic' },
-  --             hints = { 'italic' },
-  --             warnings = { 'italic' },
-  --             information = { 'italic' },
-  --           },
-  --           underlines = {
-  --             errors = { 'underline' },
-  --             hints = { 'underline' },
-  --             warnings = { 'underline' },
-  --             information = { 'underline' },
-  --           },
-  --           inlay_hints = {
-  --             background = true,
-  --           },
-  --         },
-  --       },
-  --     }
-  --     -- vim.cmd.colorscheme 'catppuccin-macchiato'
-  --   end,
-  -- },
-
-  --Rose pine colorscheme
   {
-    'rose-pine/neovim',
-    name = 'rose-pine',
-    lazy = false,
-    priority = 1000,
+    'rebelot/kanagawa.nvim',
     config = function()
-      local rosepine = require 'rose-pine'
-      rosepine.setup {
-        variant = 'moon', -- auto, main, moon, or dawn
-        dark_variant = 'main', -- main, moon, or dawn
-        dim_inactive_windows = false,
-        extend_background_behind_borders = true,
-
-        enable = {
-          terminal = true,
-          legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
-          migrations = true, -- Handle deprecated options automatically
+      require('kanagawa').setup {
+        compile = false, -- enable compiling the colorscheme
+        undercurl = true, -- enable undercurls
+        commentStyle = { italic = false },
+        functionStyle = {},
+        keywordStyle = { italic = false },
+        statementStyle = { bold = false },
+        typeStyle = {},
+        transparent = false, -- do not set background color
+        dimInactive = false, -- dim inactive window `:h hl-NormalNC`
+        terminalColors = true, -- define vim.g.terminal_color_{0,17}
+        colors = { -- add/modify theme and palette colors
+          palette = {},
+          theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
         },
+        overrides = function(colors) -- add/modify highlights
+          local theme = colors.theme
+          return {
+            NormalFloat = { bg = 'none' },
+            FloatBorder = { bg = 'none' },
+            FloatTitle = { bg = 'none' },
 
-        styles = {
-          bold = false,
-          italic = false,
-          transparency = true,
-        },
+            -- Save an hlgroup with dark background and dimmed foreground
+            -- so that you can use it where your still want darker windows.
+            -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
+            NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
 
-        groups = {
-          border = 'muted',
-          link = 'iris',
-          panel = 'surface',
-
-          error = 'love',
-          hint = 'iris',
-          info = 'foam',
-          note = 'pine',
-          todo = 'rose',
-          warn = 'gold',
-
-          git_add = 'foam',
-          git_change = 'rose',
-          git_delete = 'love',
-          git_dirty = 'rose',
-          git_ignore = 'muted',
-          git_merge = 'iris',
-          git_rename = 'pine',
-          git_stage = 'iris',
-          git_text = 'rose',
-          git_untracked = 'subtle',
-
-          h1 = 'iris',
-          h2 = 'foam',
-          h3 = 'rose',
-          h4 = 'gold',
-          h5 = 'pine',
-          h6 = 'foam',
-        },
-
-        highlight_groups = {
-          -- Comment = { fg = "foam" },
-          -- VertSplit = { fg = "muted", bg = "muted" },
-        },
-
-        before_highlight = function(group, highlight, palette)
-          -- Disable all undercurls
-          -- if highlight.undercurl then
-          --     highlight.undercurl = false
-          -- end
-          --
-          -- Change palette colour
-          -- if highlight.fg == palette.pine then
-          --     highlight.fg = palette.foam
-          -- end
+            -- Popular plugins that open floats will link to NormalFloat by default;
+            -- set their background accordingly if you wish to keep them dark and borderless
+            LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+            MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+            TelescopeTitle = { fg = theme.ui.special, bold = true },
+            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
+            PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
+            PmenuSbar = { bg = theme.ui.bg_m1 },
+            PmenuThumb = { bg = theme.ui.bg_p2 },
+            ['@variable.builtin'] = { italic = false },
+          }
         end,
+        theme = 'wave', -- Load "wave" theme when 'background' option is not set
+        background = { -- map the value of 'background' option to a theme
+          dark = 'wave', -- try "dragon" !
+          light = 'lotus',
+        },
       }
-      --vim.cmd 'colorscheme rose-pine',
-      -- vim.cmd("colorscheme rose-pine-main")
-      vim.cmd 'colorscheme rose-pine-moon'
-      -- vim.cmd 'colorscheme rose-pine-dawn'
+
+      -- setup must be called before loading
+      vim.cmd 'colorscheme kanagawa'
     end,
   },
 
@@ -1182,8 +1047,8 @@ require('lazy').setup({
         on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
       }
       vim.api.nvim_set_hl(0, 'TreesitterContextBottom', { default = false, underline = false })
-      vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, link = 'Conceal' })
-      vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, link = 'NormalNC' })
+      vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, link = 'LineNr' })
+      vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, link = 'LineNr' })
       vim.keymap.set('n', '[c', function()
         require('treesitter-context').go_to_context(vim.v.count1)
       end, { silent = true, desc = 'Jump to context' })
@@ -1202,11 +1067,6 @@ require('lazy').setup({
       local cmp = require 'cmp'
       cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
     end,
-  },
-
-  --dev-icon
-  {
-    'nvim-tree/nvim-web-devicons',
   },
 
   -- Status line
@@ -1291,11 +1151,11 @@ require('lazy').setup({
     'romgrk/barbar.nvim',
     dependencies = {
       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
     },
     init = function()
       vim.g.barbar_auto_setup = false
     end,
-    version = '^1.0.0', -- optional: only update when a new 1.x version is released
     config = function()
       local map = vim.api.nvim_set_keymap
       local opts = { noremap = true, silent = true }
@@ -1305,21 +1165,10 @@ require('lazy').setup({
       -- Re-order to previous/next
       map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
       map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
-      -- Goto buffer in position...
-      map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
-      map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
-      map('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
-      map('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
-      map('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
-      map('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
-      map('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
-      map('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
-      map('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
-      map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
       -- Pin/unpin buffer
       map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
       -- Close buffer
-      map('n', '<A-c>', '<Cmd>BufferClose!<CR>', opts)
+      map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
       -- Wipeout buffer
       --                 :BufferWipeout
       -- Close commands
@@ -1344,7 +1193,6 @@ require('lazy').setup({
       }
     end,
   },
-
   -- An awesome file explorer
   {
     'stevearc/oil.nvim',
