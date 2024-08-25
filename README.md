@@ -1,1 +1,1 @@
-A clone of kickstart.nvim tailored to fit my needs
+Neovim config for a Neovim user wannabe

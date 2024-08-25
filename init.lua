@@ -84,6 +84,17 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+-- Colorscheme command:
+vim.api.nvim_create_user_command('CSLight', function()
+  vim.cmd 'colorscheme kanagawa-lotus'
+end, {})
+vim.api.nvim_create_user_command('CSDark', function()
+  vim.cmd 'colorscheme kanagawa-wave'
+end, {})
+vim.api.nvim_create_user_command('CSLow', function()
+  vim.cmd 'colorscheme kanagawa-dragon'
+end, {})
+
 -- lazygit init
 vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
 vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
@@ -579,9 +590,9 @@ require('lazy').setup({
       -- Add border to the diagnostic popup window
       vim.diagnostic.config {
         virtual_text = {
-          prefix = '■', -- Could be '●', '▎', 'x', '■', , 
+          prefix = '●', -- Could be '●', '▎', 'x', '■', , 
         },
-        float = { border = border },
+        float = { border = 'rounded' },
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -610,9 +621,11 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
+
         --java
         jdtls = {
           handlers = handlers,
+          cmd = { 'C:/Users/ADMIN/AppData/Local/nvim-data/mason/bin/jdtls' },
         },
 
         --python server
