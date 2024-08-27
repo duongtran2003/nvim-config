@@ -110,6 +110,10 @@ vim.o.background = 'dark'
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- buffer
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = '[B]uffer save and [D]elete' })
+vim.keymap.set('n', '<leader>br', '<cmd>bd!<CR>', { desc = '[B]uffer [R]emove' })
+
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
@@ -181,7 +185,7 @@ vim.opt.cursorline = false
 vim.opt.scrolloff = 10
 
 -- Make your cursor fat in all modes
-vim.opt.guicursor = 'n-v-i-c:block-Cursor'
+vim.opt.guicursor = 'n-v-c-i:block-Cursor'
 
 -- term color
 vim.opt.termguicolors = true
@@ -726,7 +730,7 @@ require('lazy').setup({
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 250,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
@@ -737,7 +741,7 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'prettier' },
       },
     },
   },
@@ -1160,52 +1164,36 @@ require('lazy').setup({
   },
 
   -- A plugin for bufferline
-  {
-    'romgrk/barbar.nvim',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
-      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
-    },
-    init = function()
-      vim.g.barbar_auto_setup = false
-    end,
-    config = function()
-      local map = vim.api.nvim_set_keymap
-      local opts = { noremap = true, silent = true }
-      -- Move to previous/next
-      map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
-      map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
-      -- Re-order to previous/next
-      map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
-      map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
-      -- Pin/unpin buffer
-      map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
-      -- Close buffer
-      map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
-      -- Wipeout buffer
-      --                 :BufferWipeout
-      -- Close commands
-      --                 :BufferCloseAllButCurrent
-      --                 :BufferCloseAllButPinned
-      --                 :BufferCloseAllButCurrentOrPinned
-      --                 :BufferCloseBuffersLeft
-      --                 :BufferCloseBuffersRight
-      -- Magic buffer-picking mode
-      map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
-      -- Sort automatically by...
-      map('n', '<Space>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
-      map('n', '<Space>bn', '<Cmd>BufferOrderByName<CR>', opts)
-      map('n', '<Space>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
-      map('n', '<Space>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
-      map('n', '<Space>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
-      require('barbar').setup {
-        -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-        animation = false,
-        -- insert_at_start = true,
-        -- …etc.
-      }
-    end,
-  },
+  -- {
+  --   'romgrk/barbar.nvim',
+  --   dependencies = {
+  --     'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+  --     'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+  --   },
+  --   init = function()
+  --     vim.g.barbar_auto_setup = false
+  --   end,
+  --   config = function()
+  --     local map = vim.api.nvim_set_keymap
+  --     local opts = { noremap = true, silent = true }
+  --     -- Move to previous/next
+  --     map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+  --     map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+  --     -- Re-order to previous/next
+  --     map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+  --     map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+  --     -- Pin/unpin buffer
+  --     map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
+  --     -- Close buffer
+  --     map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
+  --     require('barbar').setup {
+  --       -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+  --       animation = false,
+  --       -- insert_at_start = true,
+  --       -- …etc.
+  --     }
+  --   end,
+  -- },
   -- An awesome file explorer
   {
     'stevearc/oil.nvim',
@@ -1280,6 +1268,75 @@ require('lazy').setup({
       set('n', '<A-k>', function()
         resize.adjust_current_win_height(1, 2)
       end)
+    end,
+  },
+
+  -- Harpoon
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+    config = function()
+      local harpoon = require 'harpoon'
+      harpoon:setup()
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon:list():add()
+      end, { desc='[A]dd to Harpoon list' })
+      vim.keymap.set('n', '<A-,>', function()
+        harpoon:list():prev()
+      end)
+      vim.keymap.set('n', '<A-.>', function()
+        harpoon:list():next()
+      end)
+
+      -- basic telescope configuration
+      local conf = require('telescope.config').values
+      local function toggle_telescope(harpoon_files)
+        local function finder()
+          local file_paths = {}
+          for _, item in ipairs(harpoon_files.items) do
+            table.insert(file_paths, item.value)
+          end
+          return require('telescope.finders').new_table {
+            results = file_paths,
+          }
+        end
+
+        require('telescope.pickers')
+          .new({}, {
+            prompt_title = 'Harpoon',
+            finder = finder(),
+            previewer = conf.file_previewer {},
+            sorter = conf.generic_sorter {},
+            attach_mappings = function(prompt_bufnr, map)
+              map('i', '<A-c>', function()
+                local state = require 'telescope.actions.state'
+                local selected_entry = state.get_selected_entry()
+                local current_picker = state.get_current_picker(prompt_bufnr)
+
+                table.remove(harpoon_files.items, selected_entry.index)
+                current_picker:refresh(finder())
+              end)
+              map('n', '<A-c>', function()
+                local state = require 'telescope.actions.state'
+                local selected_entry = state.get_selected_entry()
+                local current_picker = state.get_current_picker(prompt_bufnr)
+
+                table.remove(harpoon_files.items, selected_entry.index)
+                current_picker:refresh(finder())
+              end)
+              return true
+            end,
+          })
+          :find()
+      end
+
+      vim.keymap.set('n', '<C-e>', function()
+        toggle_telescope(harpoon:list())
+      end, { desc = 'Open harpoon window' })
     end,
   },
 
