@@ -84,15 +84,40 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+-- Browser search
+vim.g.browser_search_default_engine = 'duckduckgo'
+vim.api.nvim_create_user_command('SE', function(args)
+  local cmd = 'BrowserSearch'
+  if args['args'] then
+    cmd = cmd .. ' ' .. args['args']
+  end
+  vim.cmd(cmd)
+end, { nargs = '*', desc = '[S]earch with [e]ngine' })
+
 -- Colorscheme command:
-vim.api.nvim_create_user_command('CSLight', function()
+--Kanagawa
+vim.api.nvim_create_user_command('KanaLotus', function()
   vim.cmd 'colorscheme kanagawa-lotus'
 end, {})
-vim.api.nvim_create_user_command('CSDark', function()
+vim.api.nvim_create_user_command('KanaWave', function()
   vim.cmd 'colorscheme kanagawa-wave'
 end, {})
-vim.api.nvim_create_user_command('CSLow', function()
+vim.api.nvim_create_user_command('KanaDragon', function()
   vim.cmd 'colorscheme kanagawa-dragon'
+end, {})
+
+--Catppuccine
+vim.api.nvim_create_user_command('CatLatte', function()
+  vim.cmd 'colorscheme catppuccin-latte'
+end, {})
+vim.api.nvim_create_user_command('CatFrappe', function()
+  vim.cmd 'colorscheme catppuccin-frappe'
+end, {})
+vim.api.nvim_create_user_command('CatMacchiato', function()
+  vim.cmd 'colorscheme catppuccin-macchiato'
+end, {})
+vim.api.nvim_create_user_command('CatMocha', function()
+  vim.cmd 'colorscheme catppuccin-mocha'
 end, {})
 
 -- lazygit init
@@ -109,10 +134,6 @@ vim.o.background = 'dark'
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
--- buffer
-vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = '[B]uffer save and [D]elete' })
-vim.keymap.set('n', '<leader>br', '<cmd>bd!<CR>', { desc = '[B]uffer [R]emove' })
 
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
@@ -262,7 +283,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automatically
+  -- { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -408,6 +429,8 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+
+      -- Browser search
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -594,7 +617,7 @@ require('lazy').setup({
       -- Add border to the diagnostic popup window
       vim.diagnostic.config {
         virtual_text = {
-          prefix = '●', -- Could be '●', '▎', 'x', '■', , 
+          prefix = '■', -- Could be '●', '▎', 'x', '■', , 
         },
         float = { border = 'rounded' },
       }
@@ -630,6 +653,10 @@ require('lazy').setup({
         jdtls = {
           handlers = handlers,
           cmd = { 'C:/Users/ADMIN/AppData/Local/nvim-data/mason/bin/jdtls' },
+        },
+
+        cssls = {
+          handlers = handlers,
         },
 
         --python server
@@ -908,6 +935,7 @@ require('lazy').setup({
   --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
   {
     'rebelot/kanagawa.nvim',
+    enabled = false,
     config = function()
       require('kanagawa').setup {
         compile = false, -- enable compiling the colorscheme
@@ -918,7 +946,7 @@ require('lazy').setup({
         statementStyle = { bold = false },
         typeStyle = {},
         transparent = false, -- do not set background color
-        dimInactive = false, -- dim inactive window `:h hl-NormalNC`
+        dimInactive = true, -- dim inactive window `:h hl-NormalNC`
         terminalColors = true, -- define vim.g.terminal_color_{0,17}
         colors = { -- add/modify theme and palette colors
           palette = {},
@@ -963,6 +991,86 @@ require('lazy').setup({
 
       -- setup must be called before loading
       vim.cmd 'colorscheme kanagawa'
+    end,
+  },
+
+  -- Catppuccine
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    config = function()
+      require('catppuccin').setup {
+        flavour = 'auto', -- latte, frappe, macchiato, mocha
+        background = { -- :h background
+          light = 'latte',
+          dark = 'mocha',
+        },
+        transparent_background = false, -- disables setting the background color.
+        show_end_of_buffer = true, -- shows the '~' characters after the end of buffers
+        term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
+        dim_inactive = {
+          enabled = true, -- dims the background color of inactive window
+          shade = 'dark',
+          percentage = 0.10, -- percentage of the shade to apply to the inactive window
+        },
+        no_italic = false, -- Force no italic
+        no_bold = false, -- Force no bold
+        no_underline = false, -- Force no underline
+        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+          comments = { 'italic' }, -- Change the style of comments
+          conditionals = {},
+          loops = {},
+          functions = {},
+          keywords = {},
+          strings = {},
+          variables = {},
+          numbers = {},
+          booleans = {},
+          properties = {},
+          types = {},
+          operators = {},
+          -- miscs = {}, -- Uncomment to turn off hard-coded styles
+        },
+        color_overrides = {},
+        custom_highlights = {},
+        default_integrations = true,
+        integrations = {
+          cmp = true,
+          gitsigns = true,
+          nvimtree = true,
+          treesitter = true,
+          notify = false,
+          mini = {
+            enabled = true,
+            indentscope_color = '',
+          },
+          native_lsp = {
+            enabled = true,
+            virtual_text = {
+              errors = { 'italic' },
+              hints = { 'italic' },
+              warnings = { 'italic' },
+              information = { 'italic' },
+              ok = { 'italic' },
+            },
+            underlines = {
+              errors = { 'underline' },
+              hints = { 'underline' },
+              warnings = { 'underline' },
+              information = { 'underline' },
+              ok = { 'underline' },
+            },
+            inlay_hints = {
+              background = true,
+            },
+          },
+          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+        },
+      }
+
+      -- setup must be called before loading
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 
@@ -1054,7 +1162,7 @@ require('lazy').setup({
         max_lines = 2, -- How many lines the window should span. Values <= 0 mean no limit.
         min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
         line_numbers = true,
-        multiline_threshold = 2, -- Maximum number of lines to show for a single context
+        multiline_threshold = 1, -- Maximum number of lines to show for a single context
         trim_scope = 'inner', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
         mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
         -- Separator between context and content. Should be a single character string, like '-'.
@@ -1066,9 +1174,9 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'TreesitterContextBottom', { default = false, underline = false })
       vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, link = 'LineNr' })
       vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, link = 'LineNr' })
-      vim.keymap.set('n', '[c', function()
+      vim.keymap.set('n', 'gu', function()
         require('treesitter-context').go_to_context(vim.v.count1)
-      end, { silent = true, desc = 'Jump to context' })
+      end, { silent = true, desc = '[G]o [u]p to context' })
     end,
   },
 
@@ -1094,7 +1202,7 @@ require('lazy').setup({
       require('lualine').setup {
         options = {
           icons_enabled = true,
-          theme = 'auto',
+          theme = 'catppuccin',
           component_separators = '▏',
           section_separators = { left = '', right = '' },
           disabled_filetypes = {
@@ -1164,36 +1272,35 @@ require('lazy').setup({
   },
 
   -- A plugin for bufferline
-  -- {
-  --   'romgrk/barbar.nvim',
-  --   dependencies = {
-  --     'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
-  --     'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
-  --   },
-  --   init = function()
-  --     vim.g.barbar_auto_setup = false
-  --   end,
-  --   config = function()
-  --     local map = vim.api.nvim_set_keymap
-  --     local opts = { noremap = true, silent = true }
-  --     -- Move to previous/next
-  --     map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
-  --     map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
-  --     -- Re-order to previous/next
-  --     map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
-  --     map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
-  --     -- Pin/unpin buffer
-  --     map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
-  --     -- Close buffer
-  --     map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
-  --     require('barbar').setup {
-  --       -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-  --       animation = false,
-  --       -- insert_at_start = true,
-  --       -- …etc.
-  --     }
-  --   end,
-  -- },
+  {
+    'romgrk/barbar.nvim',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+    },
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+    config = function()
+      local map = vim.api.nvim_set_keymap
+      local opts = { noremap = true, silent = true }
+      -- Move to previous/next
+      map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+      map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+      -- Re-order to previous/next
+      map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+      map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+      -- Close buffer
+      map('n', '<A-c>', '<Cmd>bd<CR>', opts) --Close
+      map('n', '<A-q>', '<Cmd>bd!<CR>', opts) --Close unsave
+      require('barbar').setup {
+        -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+        animation = false,
+        insert_at_start = true,
+        -- …etc.
+      }
+    end,
+  },
   -- An awesome file explorer
   {
     'stevearc/oil.nvim',
@@ -1271,73 +1378,9 @@ require('lazy').setup({
     end,
   },
 
-  -- Harpoon
+  -- Browser search
   {
-    'ThePrimeagen/harpoon',
-    branch = 'harpoon2',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-    },
-    config = function()
-      local harpoon = require 'harpoon'
-      harpoon:setup()
-      vim.keymap.set('n', '<leader>a', function()
-        harpoon:list():add()
-      end, { desc='[A]dd to Harpoon list' })
-      vim.keymap.set('n', '<A-,>', function()
-        harpoon:list():prev()
-      end)
-      vim.keymap.set('n', '<A-.>', function()
-        harpoon:list():next()
-      end)
-
-      -- basic telescope configuration
-      local conf = require('telescope.config').values
-      local function toggle_telescope(harpoon_files)
-        local function finder()
-          local file_paths = {}
-          for _, item in ipairs(harpoon_files.items) do
-            table.insert(file_paths, item.value)
-          end
-          return require('telescope.finders').new_table {
-            results = file_paths,
-          }
-        end
-
-        require('telescope.pickers')
-          .new({}, {
-            prompt_title = 'Harpoon',
-            finder = finder(),
-            previewer = conf.file_previewer {},
-            sorter = conf.generic_sorter {},
-            attach_mappings = function(prompt_bufnr, map)
-              map('i', '<A-c>', function()
-                local state = require 'telescope.actions.state'
-                local selected_entry = state.get_selected_entry()
-                local current_picker = state.get_current_picker(prompt_bufnr)
-
-                table.remove(harpoon_files.items, selected_entry.index)
-                current_picker:refresh(finder())
-              end)
-              map('n', '<A-c>', function()
-                local state = require 'telescope.actions.state'
-                local selected_entry = state.get_selected_entry()
-                local current_picker = state.get_current_picker(prompt_bufnr)
-
-                table.remove(harpoon_files.items, selected_entry.index)
-                current_picker:refresh(finder())
-              end)
-              return true
-            end,
-          })
-          :find()
-      end
-
-      vim.keymap.set('n', '<C-e>', function()
-        toggle_telescope(harpoon:list())
-      end, { desc = 'Open harpoon window' })
-    end,
+    'voldikss/vim-browser-search',
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
