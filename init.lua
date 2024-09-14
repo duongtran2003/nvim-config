@@ -1216,11 +1216,7 @@ require('lazy').setup({
 
       insert_left {
         'diff',
-        symbols = {
-          added = '+',
-          modified = '~',
-          removed = '-',
-        },
+        symbols = { added = '+', modified = '~', removed = '-' },
         cond = conditions.hide_in_width,
       }
       insert_left {
@@ -1342,6 +1338,7 @@ require('lazy').setup({
     'echasnovski/mini.indentscope',
     enabled = true,
     config = function()
+      require('mini.indentscope').gen_animation.none()
       require('mini.indentscope').setup {
         -- Draw options
         draw = {
@@ -1353,9 +1350,8 @@ require('lazy').setup({
           -- |MiniIndentscope.gen_animation| for builtin options. To disable
           -- animation, use `require('mini.indentscope').gen_animation.none()`.
           animation = function(s, n)
-            return 0
-          end, --<function: implements constant 20ms between steps>,
-
+            return s / n * 20
+          end,
           -- Symbol priority. Increase to display on top of more symbols.
           priority = 2,
         },
@@ -1390,27 +1386,6 @@ require('lazy').setup({
         -- Which character to use for drawing scope indicator
         symbol = '▏',
       }
-    end,
-  },
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    enabled = false,
-    main = 'ibl',
-    opts = {},
-    config = function()
-      require('ibl').setup {
-        indent = {
-          char = '▏', -- This is a slightly thinner char than the default one, check :help ibl.config.indent.char
-        },
-        scope = {
-          show_start = false,
-          show_end = false,
-        },
-      }
-      -- disable indentation on the first level
-      local hooks = require 'ibl.hooks'
-      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
-      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
     end,
   },
 
