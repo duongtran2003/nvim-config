@@ -94,32 +94,6 @@ vim.api.nvim_create_user_command('SE', function(args)
   vim.cmd(cmd)
 end, { nargs = '*', desc = '[S]earch with [e]ngine' })
 
--- Colorscheme command:
---Kanagawa
-vim.api.nvim_create_user_command('KanaLotus', function()
-  vim.cmd 'colorscheme kanagawa-lotus'
-end, {})
-vim.api.nvim_create_user_command('KanaWave', function()
-  vim.cmd 'colorscheme kanagawa-wave'
-end, {})
-vim.api.nvim_create_user_command('KanaDragon', function()
-  vim.cmd 'colorscheme kanagawa-dragon'
-end, {})
-
---Catppuccine
-vim.api.nvim_create_user_command('CatLatte', function()
-  vim.cmd 'colorscheme catppuccin-latte'
-end, {})
-vim.api.nvim_create_user_command('CatFrappe', function()
-  vim.cmd 'colorscheme catppuccin-frappe'
-end, {})
-vim.api.nvim_create_user_command('CatMacchiato', function()
-  vim.cmd 'colorscheme catppuccin-macchiato'
-end, {})
-vim.api.nvim_create_user_command('CatMocha', function()
-  vim.cmd 'colorscheme catppuccin-mocha'
-end, {})
-
 -- lazygit init
 vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
 vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
@@ -128,6 +102,9 @@ vim.g.lazygit_floating_window_use_plenary = 1 -- use plenary.nvim to manage floa
 
 -- Vim background
 vim.o.background = 'dark'
+
+-- Transparency
+vim.api.nvim_set_hl(0, 'NormalFloat', {})
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -203,10 +180,10 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = false
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 8
 
 -- Make your cursor fat in all modes
-vim.opt.guicursor = 'n-v-c-i:block-Cursor'
+-- vim.opt.guicursor = 'n-v-c-i:block-Cursor'
 
 -- term color
 vim.opt.termguicolors = true
@@ -290,7 +267,6 @@ require('lazy').setup({
   -- keys can be used to configure plugin behavior/loading/etc.
   --
   -- Use `opts = {}` to force a plugin to be loaded.
-  --
   --  This is equivalent to:
   --    require('Comment').setup({})
 
@@ -933,144 +909,45 @@ require('lazy').setup({
   --   -- change the command in the config to whatever the name of that colorscheme is.
   --   --
   --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+
   {
-    'rebelot/kanagawa.nvim',
-    enabled = false,
-    config = function()
-      require('kanagawa').setup {
-        compile = false, -- enable compiling the colorscheme
-        undercurl = true, -- enable undercurls
-        commentStyle = { italic = false },
-        functionStyle = {},
-        keywordStyle = { italic = false },
-        statementStyle = { bold = false },
-        typeStyle = {},
-        transparent = false, -- do not set background color
-        dimInactive = true, -- dim inactive window `:h hl-NormalNC`
-        terminalColors = true, -- define vim.g.terminal_color_{0,17}
-        colors = { -- add/modify theme and palette colors
-          palette = {},
-          theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
-        },
-        overrides = function(colors) -- add/modify highlights
-          local theme = colors.theme
-          return {
-            NormalFloat = { bg = 'none' },
-            FloatBorder = { bg = 'none' },
-            FloatTitle = { bg = 'none' },
-
-            -- Save an hlgroup with dark background and dimmed foreground
-            -- so that you can use it where your still want darker windows.
-            -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
-            NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
-
-            -- Popular plugins that open floats will link to NormalFloat by default;
-            -- set their background accordingly if you wish to keep them dark and borderless
-            LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-            MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-            TelescopeTitle = { fg = theme.ui.special, bold = true },
-            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
-            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
-            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
-            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
-            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
-            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
-            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
-            PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
-            PmenuSbar = { bg = theme.ui.bg_m1 },
-            PmenuThumb = { bg = theme.ui.bg_p2 },
-            ['@variable.builtin'] = { italic = false },
-          }
-        end,
-        theme = 'wave', -- Load "wave" theme when 'background' option is not set
-        background = { -- map the value of 'background' option to a theme
-          dark = 'wave', -- try "dragon" !
-          light = 'lotus',
-        },
-      }
-
-      -- setup must be called before loading
-      vim.cmd 'colorscheme kanagawa'
-    end,
-  },
-
-  -- Catppuccine
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    'EdenEast/nightfox.nvim',
+    lazy = false,
     priority = 1000,
     config = function()
-      require('catppuccin').setup {
-        flavour = 'auto', -- latte, frappe, macchiato, mocha
-        background = { -- :h background
-          light = 'latte',
-          dark = 'mocha',
-        },
-        transparent_background = false, -- disables setting the background color.
-        show_end_of_buffer = true, -- shows the '~' characters after the end of buffers
-        term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
-        dim_inactive = {
-          enabled = true, -- dims the background color of inactive window
-          shade = 'dark',
-          percentage = 0.10, -- percentage of the shade to apply to the inactive window
-        },
-        no_italic = false, -- Force no italic
-        no_bold = false, -- Force no bold
-        no_underline = false, -- Force no underline
-        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-          comments = { 'italic' }, -- Change the style of comments
-          conditionals = {},
-          loops = {},
-          functions = {},
-          keywords = {},
-          strings = {},
-          variables = {},
-          numbers = {},
-          booleans = {},
-          properties = {},
-          types = {},
-          operators = {},
-          -- miscs = {}, -- Uncomment to turn off hard-coded styles
-        },
-        color_overrides = {},
-        custom_highlights = {},
-        default_integrations = true,
-        integrations = {
-          cmp = true,
-          gitsigns = true,
-          nvimtree = true,
-          treesitter = true,
-          notify = false,
-          mini = {
-            enabled = true,
-            indentscope_color = '',
+      require('nightfox').setup {
+        options = {
+          compile_path = vim.fn.stdpath 'cache' .. '/nightfox',
+          compile_file_suffix = '_compiled', -- Compiled file suffix
+          transparent = true,
+          terminal_colors = true,
+          dim_inactive = false,
+          module_default = true,
+          styles = {
+            comments = 'NONE',
+            conditionals = 'NONE',
+            constants = 'bold',
+            functions = 'NONE',
+            keywords = 'NONE',
+            numbers = 'NONE',
+            operators = 'NONE',
+            strings = 'NONE',
+            types = 'NONE',
+            variables = 'NONE',
           },
-          native_lsp = {
-            enabled = true,
-            virtual_text = {
-              errors = { 'italic' },
-              hints = { 'italic' },
-              warnings = { 'italic' },
-              information = { 'italic' },
-              ok = { 'italic' },
-            },
-            underlines = {
-              errors = { 'underline' },
-              hints = { 'underline' },
-              warnings = { 'underline' },
-              information = { 'underline' },
-              ok = { 'underline' },
-            },
-            inlay_hints = {
-              background = true,
-            },
+          inverse = { -- Inverse highlight for different types
+            match_paren = true,
+            visual = false,
+            search = false,
           },
-          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+          modules = { -- List of various plugins and additional options
+            -- ...
+          },
         },
+        specs = {},
+        groups = {},
       }
-
-      -- setup must be called before loading
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme 'nightfox'
     end,
   },
 
@@ -1172,8 +1049,8 @@ require('lazy').setup({
         on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
       }
       vim.api.nvim_set_hl(0, 'TreesitterContextBottom', { default = false, underline = false })
-      vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, link = 'LineNr' })
-      vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, link = 'LineNr' })
+      vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', { default = false, fg = '#c8c7e0' })
+      vim.api.nvim_set_hl(0, 'TreesitterContext', { default = false, bg = '' })
       vim.keymap.set('n', 'gu', function()
         require('treesitter-context').go_to_context(vim.v.count1)
       end, { silent = true, desc = '[G]o [u]p to context' })
@@ -1197,61 +1074,327 @@ require('lazy').setup({
   -- Status line
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
+    init = function()
+      vim.g.qf_disable_statusline = true
+    end,
     config = function()
-      require('lualine').setup {
+      local lualine = require 'lualine'
+
+      local colors = {
+        bg = '#202328',
+        fg = '#bbc2cf',
+        yellow = '#ECBE7B',
+        cyan = '#008080',
+        darkblue = '#081633',
+        green = '#98be65',
+        orange = '#FF8800',
+        violet = '#a9a1e1',
+        magenta = '#c678dd',
+        blue = '#51afef',
+        red = '#ec5f67',
+      }
+
+      local conditions = {
+        buffer_not_empty = function()
+          return vim.fn.empty(vim.fn.expand '%:t') ~= 1
+        end,
+        hide_in_width = function()
+          return vim.fn.winwidth(0) > 80
+        end,
+        check_git_workspace = function()
+          local filepath = vim.fn.expand '%:p:h'
+          local gitdir = vim.fn.finddir('.git', filepath .. ';')
+          return gitdir and #gitdir > 0 and #gitdir < #filepath
+        end,
+      }
+
+      local active = {
+        fg = colors.fg,
+        bg = '',
+      }
+
+      local inactive = {
+        fg = colors.fg,
+        bg = '',
+      }
+
+      -- Config
+      local config = {
         options = {
-          icons_enabled = true,
-          theme = 'catppuccin',
-          component_separators = '▏',
-          section_separators = { left = '', right = '' },
-          disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-          },
-          ignore_focus = {},
-          always_divide_middle = true,
-          globalstatus = false,
-          refresh = {
-            statusline = 1000,
-            tabline = 1000,
-            winbar = 1000,
+          -- component_separators = { left = '', right = '' },
+          -- section_separators = { left = '', right = '' },
+          component_separators = '',
+          section_separators = '',
+          theme = {
+            -- We are going to use lualine_c an lualine_x as left and
+            -- right section. Both are highlighted by c theme .  So we
+            -- are just setting default looks o statusline
+            normal = {
+              c = active,
+            },
+            inactive = {
+              c = inactive,
+            },
           },
         },
         sections = {
-          lualine_a = { { 'mode', right_padding = 2 } },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
-          lualine_c = {
-            {
-              'filename',
-              path = 1,
-            },
-          },
-          lualine_x = { 'filetype' },
-          lualine_y = { 'progress' },
-          lualine_z = {
-            { 'location', left_padding = 2 },
-          },
-        },
-        inactive_sections = {
+          -- these are to remove the defaults
           lualine_a = {},
           lualine_b = {},
-          lualine_c = { { 'filetype', icon_only = true }, 'filename' },
-          lualine_x = {},
           lualine_y = {},
           lualine_z = {},
+          -- These will be filled later
+          lualine_c = {},
+          lualine_x = {},
         },
-        tabline = {},
-        winbar = {},
-        inactive_winbar = {},
-        extensions = {},
+        inactive_sections = {
+          -- these are to remove the defaults
+          lualine_a = {},
+          lualine_b = {},
+          lualine_y = {},
+          lualine_z = {},
+          lualine_c = {},
+          lualine_x = {},
+        },
       }
+
+      -- Inserts a component in lualine_c at left section
+      local function insert_left(component)
+        table.insert(config.sections.lualine_c, component)
+      end
+
+      -- Inserts a component in lualine_x at right section
+      local function insert_right(component)
+        table.insert(config.sections.lualine_x, component)
+      end
+
+      -- Insert a component for inactive
+      local function insert_left_inactive(component)
+        table.insert(config.inactive_sections.lualine_c, component)
+      end
+
+      insert_left {
+        -- mode component
+        function()
+          return '▊'
+        end,
+        color = function()
+          -- auto change color according to neovims mode
+          local mode_color = {
+            n = colors.red,
+            i = colors.green,
+            v = colors.blue,
+            [''] = colors.blue,
+            V = colors.blue,
+            c = colors.magenta,
+            no = colors.red,
+            s = colors.orange,
+            S = colors.orange,
+            [''] = colors.orange,
+            ic = colors.yellow,
+            R = colors.violet,
+            Rv = colors.violet,
+            cv = colors.red,
+            ce = colors.red,
+            r = colors.cyan,
+            rm = colors.cyan,
+            ['r?'] = colors.cyan,
+            ['!'] = colors.red,
+            t = colors.red,
+          }
+          return { fg = mode_color[vim.fn.mode()] }
+        end,
+        padding = { right = 1 },
+      }
+
+      insert_left {
+        'branch',
+        icon = ' ',
+        color = { fg = colors.violet, gui = 'bold' },
+      }
+
+      insert_left {
+        'diff',
+        symbols = {
+          added = '+',
+          modified = '~',
+          removed = '-',
+        },
+        cond = conditions.hide_in_width,
+      }
+      insert_left {
+        'diagnostics',
+        sources = { 'nvim_diagnostic' },
+        symbols = { error = ' ', warn = ' ', info = ' ' },
+        diagnostics_color = {
+          color_error = { fg = colors.red },
+          color_warn = { fg = colors.yellow },
+          color_info = { fg = colors.cyan },
+        },
+      }
+
+      -- Insert mid section. You can make any number of sections in neovim :)
+      -- for lualine it's any number greater then 2
+      insert_left {
+        function()
+          return '%='
+        end,
+        separator = '',
+      }
+
+      insert_left {
+        'filename',
+        path = 1,
+        -- cond = conditions.buffer_not_empty,
+        color = { fg = colors.magenta, gui = 'bold' },
+      }
+
+      insert_left_inactive {
+        function()
+          return '%='
+        end,
+        separator = '',
+      }
+
+      insert_left_inactive {
+        'filename',
+        path = 1,
+        -- cond = conditions.buffer_not_empty,
+        color = { fg = colors.magenta, gui = 'bold' },
+      }
+      insert_right { 'location' }
+
+      insert_right { 'progress', color = { fg = colors.fg, gui = 'bold' } }
+
+      insert_right {
+        -- filesize component
+        'filetype',
+        cond = conditions.buffer_not_empty,
+      }
+      insert_right {
+        -- filesize component
+        'filesize',
+        cond = conditions.buffer_not_empty,
+      }
+      insert_right {
+        function()
+          return '▊'
+        end,
+        color = { fg = colors.blue },
+        padding = { left = 1 },
+      }
+
+      -- Now don't forget to initialize lualine
+      lualine.setup(config)
+      -- require('lualine').setup {
+      --   options = {
+      --     icons_enabled = true,
+      --     theme = 'ayu',
+      --     component_separators = '▏',
+      --     section_separators = { left = '', right = '' },
+      --     disabled_filetypes = {
+      --       statusline = {},
+      --       winbar = {},
+      --     },
+      --     ignore_focus = {},
+      --     always_divide_middle = true,
+      --     globalstatus = false,
+      --     refresh = {
+      --       statusline = 1000,
+      --       tabline = 1000,
+      --       winbar = 1000,
+      --     },
+      --   },
+      --   sections = {
+      --     lualine_a = { { 'mode', right_padding = 2 } },
+      --     lualine_b = { 'branch', 'diff', 'diagnostics' },
+      --     lualine_c = {
+      --       {
+      --         'filename',
+      --         path = 1,
+      --       },
+      --     },
+      --     lualine_x = { 'filetype' },
+      --     lualine_y = { 'progress' },
+      --     lualine_z = {
+      --       { 'location', left_padding = 2 },
+      --     },
+      --   },
+      --   inactive_sections = {
+      --     lualine_a = {},
+      --     lualine_b = {},
+      --     lualine_c = { { 'filetype', icon_only = true }, 'filename' },
+      --     lualine_x = {},
+      --     lualine_y = {},
+      --     lualine_z = {},
+      --   },
+      --   tabline = {},
+      --   winbar = {},
+      --   inactive_winbar = {},
+      --   extensions = {},
+      -- }
     end,
   },
 
   -- Indent line
   {
+    'echasnovski/mini.indentscope',
+    enabled = true,
+    config = function()
+      require('mini.indentscope').setup {
+        -- Draw options
+        draw = {
+          -- Delay (in ms) between event and start of drawing scope indicator
+          delay = 0,
+
+          -- Animation rule for scope's first drawing. A function which, given
+          -- next and total step numbers, returns wait time (in ms). See
+          -- |MiniIndentscope.gen_animation| for builtin options. To disable
+          -- animation, use `require('mini.indentscope').gen_animation.none()`.
+          animation = function(s, n)
+            return 0
+          end, --<function: implements constant 20ms between steps>,
+
+          -- Symbol priority. Increase to display on top of more symbols.
+          priority = 2,
+        },
+
+        -- Module mappings. Use `''` (empty string) to disable one.
+        mappings = {
+          -- Textobjects
+          object_scope = '',
+          object_scope_with_border = '',
+
+          -- Motions (jump to respective border line; if not present - body line)
+          goto_top = '',
+          goto_bottom = '',
+        },
+
+        -- Options which control scope computation
+        options = {
+          -- Type of scope's border: which line(s) with smaller indent to
+          -- categorize as border. Can be one of: 'both', 'top', 'bottom', 'none'.
+          border = 'both',
+
+          -- Whether to use cursor column when computing reference indent.
+          -- Useful to see incremental scopes with horizontal cursor movements.
+          indent_at_cursor = true,
+
+          -- Whether to first check input line to be a border of adjacent scope.
+          -- Use it if you want to place cursor on function header to get scope of
+          -- its body.
+          try_as_border = true,
+        },
+
+        -- Which character to use for drawing scope indicator
+        symbol = '▏',
+      }
+    end,
+  },
+  {
     'lukas-reineke/indent-blankline.nvim',
+    enabled = false,
     main = 'ibl',
     opts = {},
     config = function()
@@ -1301,20 +1444,33 @@ require('lazy').setup({
       }
     end,
   },
-  -- An awesome file explorer
+
+  -- Files explorer
   {
-    'stevearc/oil.nvim',
-    -- Optional dependencies
-    opts = {},
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    'echasnovski/mini.files',
+    version = '*',
     keys = {
-      { '-', '<cmd>Oil<cr>', desc = 'Open parent directory' },
+      { '-', '<cmd>lua MiniFiles.open()<cr>', desc = 'Open parent directory' },
     },
     config = function()
-      require('oil').setup {
-        view_options = {
-          show_hidden = true,
-          natural_order = false,
+      require('mini.files').setup {
+        options = {
+          -- Whether to delete permanently or move into module-specific trash
+          permanent_delete = false,
+          -- Whether to use for editing directories
+          use_as_default_explorer = true,
+        },
+        windows = {
+          -- Maximum number of windows to show side by side
+          max_number = math.huge,
+          -- Whether to show preview of file/directory under cursor
+          preview = true,
+          -- Width of focused window
+          width_focus = 20,
+          -- Width of non-focused window
+          width_nofocus = 15,
+          -- Width of preview window
+          width_preview = 80,
         },
       }
     end,
@@ -1381,6 +1537,117 @@ require('lazy').setup({
   -- Browser search
   {
     'voldikss/vim-browser-search',
+  },
+
+  -- Linting
+
+  {
+    'mfussenegger/nvim-lint',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function()
+      local lint = require 'lint'
+      lint.linters_by_ft = {
+        markdown = { 'markdownlint' },
+        javascript = { 'eslint_d' },
+        typescript = { 'eslint_d' },
+        typescriptreact = { 'eslint_d' },
+        javascriptreact = { 'eslint_d' },
+      }
+
+      -- To allow other plugins to add linters to require('lint').linters_by_ft,
+      -- instead set linters_by_ft like this:
+      -- lint.linters_by_ft = lint.linters_by_ft or {}
+      -- lint.linters_by_ft['markdown'] = { 'markdownlint' }
+      --
+      -- However, note that this will enable a set of default linters,
+      -- which will cause errors unless these tools are available:
+      -- {
+      --   clojure = { "clj-kondo" },
+      --   dockerfile = { "hadolint" },
+      --   inko = { "inko" },
+      --   janet = { "janet" },
+      --   json = { "jsonlint" },
+      --   markdown = { "vale" },
+      --   rst = { "vale" },
+      --   ruby = { "ruby" },
+      --   terraform = { "tflint" },
+      --   text = { "vale" }
+      -- }
+      --
+      -- You can disable the default linters by setting their filetypes to nil:
+      -- lint.linters_by_ft['clojure'] = nil
+      -- lint.linters_by_ft['dockerfile'] = nil
+      -- lint.linters_by_ft['inko'] = nil
+      -- lint.linters_by_ft['janet'] = nil
+      -- lint.linters_by_ft['json'] = nil
+      -- lint.linters_by_ft['markdown'] = nil
+      -- lint.linters_by_ft['rst'] = nil
+      -- lint.linters_by_ft['ruby'] = nil
+      -- lint.linters_by_ft['terraform'] = nil
+      -- lint.linters_by_ft['text'] = nil
+
+      -- Create autocommand which carries out the actual linting
+      -- on the specified events.
+      local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+        group = lint_augroup,
+        callback = function()
+          lint.try_lint()
+        end,
+      })
+
+      vim.keymap.set('n', '<leader>tl', function()
+        lint.try_lint()
+      end, { desc = '[T]ry [L]int' })
+    end,
+  },
+
+  {
+    'xiyaowong/transparent.nvim',
+    config = function()
+      require('transparent').clear_prefix 'Buffer'
+      require('transparent').clear_prefix 'DiagnosticVirtual'
+      require('transparent').clear_prefix 'DevIcon'
+      require('transparent').setup {
+        -- table: default groups
+        groups = {
+          'Normal',
+          'NormalNC',
+          'Comment',
+          'Constant',
+          'Special',
+          'Identifier',
+          'Statement',
+          'PreProc',
+          'Type',
+          'Underlined',
+          'Todo',
+          'String',
+          'Function',
+          'Conditional',
+          'Repeat',
+          'Operator',
+          'Structure',
+          'LineNr',
+          'NonText',
+          'SignColumn',
+          'CursorLine',
+          'CursorLineNr',
+          'StatusLine',
+          'StatusLineNC',
+          'EndOfBuffer',
+        },
+        -- table: additional groups that should be cleared
+        extra_groups = {
+          'NormalFloat',
+        },
+        -- table: groups you don't want to clear
+        exclude_groups = {},
+        -- function: code to be executed after highlight groups are cleared
+        -- Also the user event "TransparentClear" will be triggered
+        on_clear = function() end,
+      }
+    end,
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
