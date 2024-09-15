@@ -84,6 +84,8 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+vim.g.loaded_matchparen = 1
+
 -- Browser search
 vim.g.browser_search_default_engine = 'duckduckgo'
 vim.api.nvim_create_user_command('SE', function(args)
@@ -924,7 +926,7 @@ require('lazy').setup({
           dim_inactive = false,
           module_default = true,
           styles = {
-            comments = 'NONE',
+            comments = 'italic',
             conditionals = 'NONE',
             constants = 'bold',
             functions = 'NONE',
@@ -1283,53 +1285,6 @@ require('lazy').setup({
 
       -- Now don't forget to initialize lualine
       lualine.setup(config)
-      -- require('lualine').setup {
-      --   options = {
-      --     icons_enabled = true,
-      --     theme = 'ayu',
-      --     component_separators = '▏',
-      --     section_separators = { left = '', right = '' },
-      --     disabled_filetypes = {
-      --       statusline = {},
-      --       winbar = {},
-      --     },
-      --     ignore_focus = {},
-      --     always_divide_middle = true,
-      --     globalstatus = false,
-      --     refresh = {
-      --       statusline = 1000,
-      --       tabline = 1000,
-      --       winbar = 1000,
-      --     },
-      --   },
-      --   sections = {
-      --     lualine_a = { { 'mode', right_padding = 2 } },
-      --     lualine_b = { 'branch', 'diff', 'diagnostics' },
-      --     lualine_c = {
-      --       {
-      --         'filename',
-      --         path = 1,
-      --       },
-      --     },
-      --     lualine_x = { 'filetype' },
-      --     lualine_y = { 'progress' },
-      --     lualine_z = {
-      --       { 'location', left_padding = 2 },
-      --     },
-      --   },
-      --   inactive_sections = {
-      --     lualine_a = {},
-      --     lualine_b = {},
-      --     lualine_c = { { 'filetype', icon_only = true }, 'filename' },
-      --     lualine_x = {},
-      --     lualine_y = {},
-      --     lualine_z = {},
-      --   },
-      --   tabline = {},
-      --   winbar = {},
-      --   inactive_winbar = {},
-      --   extensions = {},
-      -- }
     end,
   },
 
