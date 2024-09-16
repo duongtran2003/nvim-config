@@ -209,6 +209,9 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- ESLint fix
+vim.keymap.set('n', '<leader>lf', '<cmd>EslintFixAll<Cr>', { desc = '[L]int [f]ix' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -705,7 +708,9 @@ require('lazy').setup({
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      require('mason').setup({
+        PATH = 'prepend'
+      })
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
