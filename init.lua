@@ -619,6 +619,7 @@ require('lazy').setup({
       --
       --  Add any additional override configuration in the following tables. Available keys are:
       --  - cmd (table): Override the default command used to start the server
+      --
       --  - filetypes (table): Override the default list of associated filetypes for the server
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
@@ -641,6 +642,10 @@ require('lazy').setup({
         },
 
         cssls = {
+          handlers = handlers,
+        },
+
+        html = {
           handlers = handlers,
         },
 
@@ -708,9 +713,9 @@ require('lazy').setup({
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup({
-        PATH = 'prepend'
-      })
+      require('mason').setup {
+        PATH = 'prepend',
+      }
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
