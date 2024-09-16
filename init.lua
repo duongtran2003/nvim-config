@@ -96,17 +96,23 @@ vim.api.nvim_create_user_command('SE', function(args)
   vim.cmd(cmd)
 end, { nargs = '*', desc = '[S]earch with [e]ngine' })
 
+-- Set tabsize
+vim.api.nvim_create_user_command('ST', function(args)
+  local size = args['args']
+  vim.cmd('set tabstop=' .. size)
+  vim.cmd('set shiftwidth=' .. size)
+  vim.cmd('set softtabstop=' .. size)
+  vim.cmd 'set expandtab'
+end, { nargs = 1, desc = '[S]et [t]absize' })
+
 -- lazygit init
 vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
 vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
-vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' } -- customize lazygit popup window border characters
+vim.g.lazygit_floating_window_border_chars = { '┌', '─', '┐', '│', '┘', '─', '└', '│' }
 vim.g.lazygit_floating_window_use_plenary = 1 -- use plenary.nvim to manage floating window if available
 
 -- Vim background
 vim.o.background = 'dark'
-
--- Transparency
-vim.api.nvim_set_hl(0, 'NormalFloat', {})
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -262,7 +268,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  -- { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automatically
+  -- { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automaticallyinit
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -408,8 +414,6 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
-      -- Browser search
-
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
@@ -427,7 +431,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
+          winblend = 0,
           previewer = false,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
@@ -642,7 +646,19 @@ require('lazy').setup({
           handlers = handlers,
         },
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {
+        ts_ls = {
+          handlers = handlers,
+        },
+
+        css_variables = {
+          handlers = handlers,
+        },
+
+        cssmodules_ls = {
+          handlers = handlers,
+        },
+
+        eslint = {
           handlers = handlers,
         },
         --tailwindcss
@@ -827,8 +843,8 @@ require('lazy').setup({
 
       cmp.setup {
         window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
+          completion = cmp.config.window.bordered { border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' } },
+          documentation = cmp.config.window.bordered { border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' } },
         },
         snippet = {
           expand = function(args)
@@ -1261,9 +1277,15 @@ require('lazy').setup({
         -- cond = conditions.buffer_not_empty,
         color = { fg = colors.magenta, gui = 'bold' },
       }
-      insert_right { 'location' }
+      -- insert_right { 'location' }
 
       insert_right { 'progress', color = { fg = colors.fg, gui = 'bold' } }
+
+      insert_right {
+        function()
+          return vim.opt.tabstop:get()
+        end,
+      }
 
       insert_right {
         -- filesize component
@@ -1339,7 +1361,7 @@ require('lazy').setup({
         },
 
         -- Which character to use for drawing scope indicator
-        symbol = '▏',
+        symbol = '╎',
       }
     end,
   },
@@ -1469,68 +1491,68 @@ require('lazy').setup({
     'voldikss/vim-browser-search',
   },
 
-  -- Linting
-
-  {
-    'mfussenegger/nvim-lint',
-    event = { 'BufReadPre', 'BufNewFile' },
-    config = function()
-      local lint = require 'lint'
-      lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
-        javascript = { 'eslint_d' },
-        typescript = { 'eslint_d' },
-        typescriptreact = { 'eslint_d' },
-        javascriptreact = { 'eslint_d' },
-      }
-
-      -- To allow other plugins to add linters to require('lint').linters_by_ft,
-      -- instead set linters_by_ft like this:
-      -- lint.linters_by_ft = lint.linters_by_ft or {}
-      -- lint.linters_by_ft['markdown'] = { 'markdownlint' }
-      --
-      -- However, note that this will enable a set of default linters,
-      -- which will cause errors unless these tools are available:
-      -- {
-      --   clojure = { "clj-kondo" },
-      --   dockerfile = { "hadolint" },
-      --   inko = { "inko" },
-      --   janet = { "janet" },
-      --   json = { "jsonlint" },
-      --   markdown = { "vale" },
-      --   rst = { "vale" },
-      --   ruby = { "ruby" },
-      --   terraform = { "tflint" },
-      --   text = { "vale" }
-      -- }
-      --
-      -- You can disable the default linters by setting their filetypes to nil:
-      -- lint.linters_by_ft['clojure'] = nil
-      -- lint.linters_by_ft['dockerfile'] = nil
-      -- lint.linters_by_ft['inko'] = nil
-      -- lint.linters_by_ft['janet'] = nil
-      -- lint.linters_by_ft['json'] = nil
-      -- lint.linters_by_ft['markdown'] = nil
-      -- lint.linters_by_ft['rst'] = nil
-      -- lint.linters_by_ft['ruby'] = nil
-      -- lint.linters_by_ft['terraform'] = nil
-      -- lint.linters_by_ft['text'] = nil
-
-      -- Create autocommand which carries out the actual linting
-      -- on the specified events.
-      local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
-      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
-        group = lint_augroup,
-        callback = function()
-          lint.try_lint()
-        end,
-      })
-
-      vim.keymap.set('n', '<leader>tl', function()
-        lint.try_lint()
-      end, { desc = '[T]ry [L]int' })
-    end,
-  },
+  -- -- Linting
+  --
+  -- {
+  --   'mfussenegger/nvim-lint',
+  --   event = { 'BufReadPre', 'BufNewFile' },
+  --   config = function()
+  --     local lint = require 'lint'
+  --     lint.linters_by_ft = {
+  --       markdown = { 'markdownlint' },
+  --       javascript = { 'eslint_d' },
+  --       typescript = { 'eslint_d' },
+  --       typescriptreact = { 'eslint_d' },
+  --       javascriptreact = { 'eslint_d' },
+  --     }
+  --
+  --     -- To allow other plugins to add linters to require('lint').linters_by_ft,
+  --     -- instead set linters_by_ft like this:
+  --     -- lint.linters_by_ft = lint.linters_by_ft or {}
+  --     -- lint.linters_by_ft['markdown'] = { 'markdownlint' }
+  --     --
+  --     -- However, note that this will enable a set of default linters,
+  --     -- which will cause errors unless these tools are available:
+  --     -- {
+  --     --   clojure = { "clj-kondo" },
+  --     --   dockerfile = { "hadolint" },
+  --     --   inko = { "inko" },
+  --     --   janet = { "janet" },
+  --     --   json = { "jsonlint" },
+  --     --   markdown = { "vale" },
+  --     --   rst = { "vale" },
+  --     --   ruby = { "ruby" },
+  --     --   terraform = { "tflint" },
+  --     --   text = { "vale" }
+  --     -- }
+  --     --
+  --     -- You can disable the default linters by setting their filetypes to nil:
+  --     -- lint.linters_by_ft['clojure'] = nil
+  --     -- lint.linters_by_ft['dockerfile'] = nil
+  --     -- lint.linters_by_ft['inko'] = nil
+  --     -- lint.linters_by_ft['janet'] = nil
+  --     -- lint.linters_by_ft['json'] = nil
+  --     -- lint.linters_by_ft['markdown'] = nil
+  --     -- lint.linters_by_ft['rst'] = nil
+  --     -- lint.linters_by_ft['ruby'] = nil
+  --     -- lint.linters_by_ft['terraform'] = nil
+  --     -- lint.linters_by_ft['text'] = nil
+  --
+  --     -- Create autocommand which carries out the actual linting
+  --     -- on the specified events.
+  --     local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+  --     vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+  --       group = lint_augroup,
+  --       callback = function()
+  --         lint.try_lint()
+  --       end,
+  --     })
+  --
+  --     vim.keymap.set('n', '<leader>tl', function()
+  --       lint.try_lint()
+  --     end, { desc = '[T]ry [L]int' })
+  --   end,
+  -- },
 
   {
     'xiyaowong/transparent.nvim',
@@ -1538,6 +1560,7 @@ require('lazy').setup({
       require('transparent').clear_prefix 'Buffer'
       require('transparent').clear_prefix 'DiagnosticVirtual'
       require('transparent').clear_prefix 'DevIcon'
+      require('transparent').clear_prefix 'Cmp'
       require('transparent').setup {
         -- table: default groups
         groups = {
