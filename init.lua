@@ -84,8 +84,9 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
-vim.g.loaded_matchparen = 1
 
+vim.g.loaded_matchparen = 1
+vim.opt.backup = false
 -- Browser search
 vim.g.browser_search_default_engine = 'duckduckgo'
 vim.api.nvim_create_user_command('SE', function(args)
@@ -1065,7 +1066,7 @@ require('lazy').setup({
       require('treesitter-context').setup {
         enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
         max_lines = 2, -- How many lines the window should span. Values <= 0 mean no limit.
-        min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+        min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.init
         line_numbers = true,
         multiline_threshold = 1, -- Maximum number of lines to show for a single context
         trim_scope = 'inner', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
@@ -1271,7 +1272,18 @@ require('lazy').setup({
         'filename',
         path = 1,
         -- cond = conditions.buffer_not_empty,
-        color = { fg = colors.magenta, gui = 'bold' },
+        color = { fg = colors.green, gui = 'bold' },
+      }
+
+      insert_left {
+        function()
+          local to_insert = ''
+          to_insert = to_insert .. ':' .. vim.opt.tabstop:get()
+          return to_insert
+        end,
+        padding = {
+          left = 0,
+        },
       }
 
       insert_left_inactive {
@@ -1291,11 +1303,11 @@ require('lazy').setup({
 
       insert_right { 'progress', color = { fg = colors.fg, gui = 'bold' } }
 
-      insert_right {
-        function()
-          return vim.opt.tabstop:get()
-        end,
-      }
+      -- insert_right {
+      --   function()
+      --     return vim.opt.tabstop:get()
+      --   end,
+      -- }
 
       insert_right {
         -- filesize component
@@ -1407,37 +1419,65 @@ require('lazy').setup({
     end,
   },
 
-  -- Files explorer
+  -- -- Files explorer
+  -- {
+  --   'echasnovski/mini.files',
+  --   version = '*',
+  --   keys = {
+  --     { '-', '<cmd>lua MiniFiles.open()<cr>', desc = 'Open parent directory' },
+  --   },
+  --   config = function()
+  --     require('mini.files').setup {
+  --       options = {
+  --         -- Whether to delete permanently or move into module-specific trash
+  --         permanent_delete = true,
+  --         -- Whether to use for editing directories
+  --         use_as_default_explorer = true,
+  --       },
+  --       windows = {
+  --         -- Maximum number of windows to show side by side
+  --         max_number = math.huge,
+  --         -- Whether to show preview of file/directory under cursor
+  --         preview = true,
+  --         -- Width of focused window
+  --         width_focus = 20,
+  --         -- Width of non-focused window
+  --         width_nofocus = 15,
+  --         -- Width of preview window
+  --         width_preview = 80,
+  --       },
+  --     }
+  --   end,
+  -- },
   {
-    'echasnovski/mini.files',
-    version = '*',
+    'stevearc/oil.nvim',
+    -- Optional dependencies
+    opts = {},
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     keys = {
-      { '-', '<cmd>lua MiniFiles.open()<cr>', desc = 'Open parent directory' },
+      { '-', '<cmd>Oil --float<cr>', desc = 'Open parent directory' },
     },
     config = function()
-      require('mini.files').setup {
-        options = {
-          -- Whether to delete permanently or move into module-specific trash
-          permanent_delete = false,
-          -- Whether to use for editing directories
-          use_as_default_explorer = true,
+      require('oil').setup {
+        view_options = {
+          show_hidden = true,
+          natural_order = false,
         },
-        windows = {
-          -- Maximum number of windows to show side by side
-          max_number = math.huge,
-          -- Whether to show preview of file/directory under cursor
-          preview = true,
-          -- Width of focused window
-          width_focus = 20,
-          -- Width of non-focused window
-          width_nofocus = 15,
-          -- Width of preview window
-          width_preview = 80,
+        float = {
+          min_width = 20,
+          max_width = 140,
+          border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' },
         },
+        preview = {
+          min_width = 120,
+          border = { '┌', '─', '┐', '│', '┘', '─', '└', '│' },
+        },
+        skip_confirm_for_simple_edits = true,
+        watch_for_changes = true,
       }
     end,
   },
-
+  --
   -- Color highlighting
   {
     'brenoprata10/nvim-highlight-colors',
