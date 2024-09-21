@@ -67,7 +67,7 @@ Kickstart Guide:
     which is very useful when you're not exactly sure of what you're looking for.
 
   I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
+    These are hints about where to find more information about the relevant settings,init
     plugins or Neovim features used in Kickstart.
 
    NOTE: Look for lines like this
@@ -83,7 +83,6 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
-
 
 vim.g.loaded_matchparen = 1
 vim.opt.backup = false
@@ -1117,6 +1116,7 @@ require('lazy').setup({
         cyan = '#008080',
         darkblue = '#081633',
         green = '#98be65',
+        inactiveText = '#d5d8d2',
         orange = '#FF8800',
         violet = '#a9a1e1',
         magenta = '#c678dd',
@@ -1295,9 +1295,9 @@ require('lazy').setup({
 
       insert_left_inactive {
         'filename',
-        path = 1,
+        path = 0,
         -- cond = conditions.buffer_not_empty,
-        color = { fg = colors.magenta, gui = 'bold' },
+        color = { fg = colors.inactiveText, gui = 'bold' },
       }
       -- insert_right { 'location' }
 
