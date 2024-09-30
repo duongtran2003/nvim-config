@@ -84,7 +84,13 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
-vim.g.loaded_matchparen = 1
+-- Center cursor when jumping around
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { noremap = true })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { noremap = true })
+vim.keymap.set('n', 'n', 'nzz', { noremap = true })
+vim.keymap.set('n', 'N', 'Nzz', { noremap = true })
+
+-- vim.g.loaded_matchparen = 1
 vim.opt.backup = false
 -- Browser search
 vim.g.browser_search_default_engine = 'duckduckgo'
@@ -108,7 +114,7 @@ end, { nargs = 1, desc = '[S]et [t]absize' })
 -- lazygit init
 vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
 vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
-vim.g.lazygit_floating_window_border_chars = { '┌', '─', '┐', '│', '┘', '─', '└', '│' }
+-- vim.g.lazygit_floating_window_border_chars = { '┌', '─', '┐', '│', '┘', '─', '└', '│' }
 vim.g.lazygit_floating_window_use_plenary = 1 -- use plenary.nvim to manage floating window if available
 
 -- Vim background
@@ -402,7 +408,12 @@ require('lazy').setup({
         -- },
         defaults = {
           path_display = {
-            'filename_first',
+            'truncate',
+          },
+          borderchars = {
+            prompt = { '─', '│', '─', '│', '├', '┤', '┴', '└' },
+            results = { '─', '│', ' ', '│', '┌', '┬', '│', '│' },
+            preview = { '─', '│', '─', ' ', '─', '┐', '┘', '─' },
           },
         },
         -- pickers = {}
@@ -436,6 +447,11 @@ require('lazy').setup({
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 0,
           previewer = false,
+          borderchars = {
+            prompt = { '─', '│', '3', '│', '┌', '┐', '7', '8' },
+            results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
+            preview = { '─', '│', '─', ' ', '─', '┐', '┘', '─' },
+          } 
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
@@ -604,7 +620,7 @@ require('lazy').setup({
         virtual_text = {
           prefix = '■', -- Could be '●', '▎', 'x', '■', , 
         },
-        float = { border = 'rounded' },
+        float = { border = 'single' },
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -964,7 +980,7 @@ require('lazy').setup({
             variables = 'NONE',
           },
           inverse = { -- Inverse highlight for different types
-            match_paren = true,
+            match_paren = false,
             visual = false,
             search = false,
           },
@@ -1323,7 +1339,32 @@ require('lazy').setup({
         function()
           return '▊'
         end,
-        color = { fg = colors.blue },
+        color = function()
+          -- auto change color according to neovims mode
+          local mode_color = {
+            n = colors.red,
+            i = colors.green,
+            v = colors.blue,
+            [''] = colors.blue,
+            V = colors.blue,
+            c = colors.magenta,
+            no = colors.red,
+            s = colors.orange,
+            S = colors.orange,
+            [''] = colors.orange,
+            ic = colors.yellow,
+            R = colors.violet,
+            Rv = colors.violet,
+            cv = colors.red,
+            ce = colors.red,
+            r = colors.cyan,
+            rm = colors.cyan,
+            ['r?'] = colors.cyan,
+            ['!'] = colors.red,
+            t = colors.red,
+          }
+          return { fg = mode_color[vim.fn.mode()] }
+        end,
         padding = { left = 1 },
       }
 
@@ -1413,45 +1454,27 @@ require('lazy').setup({
       require('barbar').setup {
         -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
         animation = false,
-        insert_at_start = true,
-        -- …etc.
+        insert_at_start = false,
+        icons = {
+          button = '',
+          separator = { left = '▎', right = '' },
+          separator_at_end = true,
+          filetype = {
+            -- Sets the icon's highlight group.
+            -- If false, will use nvim-web-devicons colors
+            custom_colors = false,
+
+            -- Requires `nvim-web-devicons` if `true`
+            enabled = true,
+          },
+        },
       }
     end,
   },
 
   -- -- Files explorer
-  -- {
-  --   'echasnovski/mini.files',
-  --   version = '*',
-  --   keys = {
-  --     { '-', '<cmd>lua MiniFiles.open()<cr>', desc = 'Open parent directory' },
-  --   },
-  --   config = function()
-  --     require('mini.files').setup {
-  --       options = {
-  --         -- Whether to delete permanently or move into module-specific trash
-  --         permanent_delete = true,
-  --         -- Whether to use for editing directories
-  --         use_as_default_explorer = true,
-  --       },
-  --       windows = {
-  --         -- Maximum number of windows to show side by side
-  --         max_number = math.huge,
-  --         -- Whether to show preview of file/directory under cursor
-  --         preview = true,
-  --         -- Width of focused window
-  --         width_focus = 20,
-  --         -- Width of non-focused window
-  --         width_nofocus = 15,
-  --         -- Width of preview window
-  --         width_preview = 80,
-  --       },
-  --     }
-  --   end,
-  -- },
   {
     'stevearc/oil.nvim',
-    -- Optional dependencies
     opts = {},
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     keys = {
@@ -1474,6 +1497,9 @@ require('lazy').setup({
         },
         skip_confirm_for_simple_edits = true,
         watch_for_changes = true,
+        keymaps = {
+          ['q'] = 'actions.close',
+        },
       }
     end,
   },
@@ -1588,7 +1614,48 @@ require('lazy').setup({
       }
     end,
   },
-
+  --Togglable terminal
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      local toggle_term = require 'toggleterm'
+      local toggleTerm = function()
+        vim.cmd ':ToggleTerm'
+      end
+      -- vim.keymap.set('n', '<Leader>t', toggleTerm, { desc = '[T]oggle terminal' })
+      toggle_term.setup {
+        direction = 'vertical',
+        size = vim.o.columns * 0.4,
+        open_mapping = [[<c-\>]],
+        insert_mappings = false,
+        start_in_insert = true,
+        persist_mode = false,
+      }
+    end,
+  },
+  {
+    'ray-x/lsp_signature.nvim',
+    event = 'InsertEnter',
+    config = function()
+      local lsp_signature = require 'lsp_signature'
+      local opts = {
+        bind = true,
+        handler_opts = {
+          border = 'single',
+        },
+        wrap = true,
+        floating_window = true,
+        max_height = 12,
+        max_width = 80,
+        hint_enable = false,
+      }
+      lsp_signature.setup(opts)
+      vim.keymap.set({ 'n' }, '<C-k>', function()
+        require('lsp_signature').toggle_float_win()
+      end, { silent = true, noremap = true, desc = 'toggle signature' })
+    end,
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
