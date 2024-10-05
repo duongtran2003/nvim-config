@@ -111,6 +111,14 @@ vim.api.nvim_create_user_command('ST', function(args)
   vim.cmd 'set expandtab'
 end, { nargs = 1, desc = '[S]et [t]absize' })
 
+-- Command alias for theme
+vim.api.nvim_create_user_command('Dark', function()
+  vim.cmd('colorscheme nightfox')
+end, { desc = 'Dark colorscheme' });
+vim.api.nvim_create_user_command('Light', function()
+  vim.cmd('colorscheme dayfox')
+end, { desc = 'Light colorscheme' });
+
 -- lazygit init
 vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
 vim.g.lazygit_floating_window_scaling_factor = 0.85 -- scaling factor for floating window
@@ -451,7 +459,7 @@ require('lazy').setup({
             prompt = { '─', '│', '3', '│', '┌', '┐', '7', '8' },
             results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
             preview = { '─', '│', '─', ' ', '─', '┐', '┘', '─' },
-          } 
+          },
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
@@ -481,13 +489,15 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {
-        notification = {
-          window = {
-            winblend = 0,
+      {
+        'j-hui/fidget.nvim', opts = {
+          notification = {
+            window = {
+              winblend = 0,
+            },
           },
-        },
-      } },
+        } 
+      },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
@@ -651,6 +661,10 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
 
+        --go
+        gopls = {
+          handlers = handlers,
+        },
         --java
         jdtls = {
           handlers = handlers,
@@ -1363,7 +1377,7 @@ require('lazy').setup({
             ['!'] = colors.red,
             t = colors.red,
           }
-          return { fg = mode_color[vim.fn.mode()] }
+          return { fg = colors.blue }
         end,
         padding = { left = 1 },
       }
@@ -1535,7 +1549,7 @@ require('lazy').setup({
     -- setting the keybinding for LazyGit with 'keys' is recommended in
     -- order to load the plugin when the command is run for the first time
     keys = {
-      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
     },
   },
 
@@ -1634,28 +1648,28 @@ require('lazy').setup({
       }
     end,
   },
-  {
-    'ray-x/lsp_signature.nvim',
-    event = 'InsertEnter',
-    config = function()
-      local lsp_signature = require 'lsp_signature'
-      local opts = {
-        bind = true,
-        handler_opts = {
-          border = 'single',
-        },
-        wrap = true,
-        floating_window = true,
-        max_height = 12,
-        max_width = 80,
-        hint_enable = false,
-      }
-      lsp_signature.setup(opts)
-      vim.keymap.set({ 'n' }, '<C-k>', function()
-        require('lsp_signature').toggle_float_win()
-      end, { silent = true, noremap = true, desc = 'toggle signature' })
-    end,
-  },
+  -- { slow
+  --   'ray-x/lsp_signature.nvim',
+  --   event = 'InsertEnter',
+  --   config = function()
+  --     local lsp_signature = require 'lsp_signature'
+  --     local opts = {
+  --       bind = true,
+  --       handler_opts = {
+  --         border = 'single',
+  --       },
+  --       wrap = true,
+  --       floating_window = true,
+  --       max_height = 12,
+  --       max_width = 80,
+  --       hint_enable = false,
+  --     }
+  --     lsp_signature.setup(opts)
+  --     vim.keymap.set({ 'n' }, '<C-k>', function()
+  --       require('lsp_signature').toggle_float_win()
+  --     end, { silent = true, noremap = true, desc = 'toggle signature' })
+  --   end,
+  -- },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
